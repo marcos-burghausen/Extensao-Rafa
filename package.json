@@ -2,14 +2,14 @@
   "name": "rafa-theme",
   "displayName": "Rafa-Oficial",
   "description": "Esta é uma extensão de temas dark, (com e sem itálico). Ainda está em desenvolvimento",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.91.0"
   },
   "publisher": "rafaelburghausen",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/pdi6825728/tema-de-cores-e-icones-para-vscode"
+    "url": "https://github.com/marcos-burghausen/Extensao-Rafa.git"
   },
   "icon": "logo_2.png",
   "categories": [
@@ -32,27 +32,27 @@
       {
         "label": "Machine",
         "uiTheme": "vs-dark",
-        "path": "./themes/Rafa-alucard-color-theme.json"
+        "path": "./themes/rafa-theme-alucard-color-theme.json"
       },
       {
         "label": "Classic",
         "uiTheme": "vs-dark",
-        "path": "./themes/rafaelburghausen-classic-color-theme.json"
+        "path": "./themes/rafa-theme-classic-color-theme.json"
       },
       {
         "label": "Dark",
         "uiTheme": "vs-dark",
-        "path": "./themes/rafaelburghausen-dark-color-theme.json"
+        "path": "./themes/rafa-theme-dark-color-theme.json"
       },
       {
         "label": "Darker",
         "uiTheme": "vs-dark",
-        "path": "./themes/Rafa-darker-color-theme.json"
+        "path": "./themes/rafa-theme-darker-color-theme.json"
       },
       {
         "label": "Alucard",
         "uiTheme": "vs-dark",
-        "path": "./themes/rafaelburghausen-machine-color-theme.json"
+        "path": "./themes/rafa-theme-machine-color-theme.json"
       }
     ],
     "commands": [
