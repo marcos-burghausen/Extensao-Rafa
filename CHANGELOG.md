@@ -1,9 +1,15 @@
-# Change Log
+### Changelog
 
-All notable changes to the "rafa-oficial" extension will be documented in this file.
+Todas as alterações notáveis ​​neste projeto serão documentadas neste arquivo.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+#### [v2.0.0]
 
-## [Unreleased]
+> 30/07/2024
 
-- Initial release
+- Adicionado configurações e grammar para a extensão vue
+
+#### [v1.0.0]
+
+> 28/07/2024
+
+- Desenvolvido extensão com 5 temas dark

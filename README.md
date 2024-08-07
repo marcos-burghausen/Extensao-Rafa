@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-    <img src="https://raw.githubusercontent.com/marcos-burghausen/Extensao-Rafa/blob/main/logo_2.png" alt="logo" width="200">
+    <img src="https://raw.githubusercontent.com/marcos-burghausen/Extensao-Rafa/main/logo_2.png" alt="logo" width="400">
   <br><br>
 </h1>
 
