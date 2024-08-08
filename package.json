@@ -1,10 +1,41 @@
 {
   "name": "rafa-theme",
   "displayName": "Rafa-Oficial",
-  "description": "Esta é uma extensão de temas dark, (com e sem itálico). Ainda está em desenvolvimento",
-  "version": "2.0.0",
+  "description": "Esta é uma extensão de temas dark (com e sem itálico) e tema de icones. Ainda está em desenvolvimento",
+  "version": "3.0.0",
   "engines": {
     "vscode": "^1.91.0"
+  },
+  "categories": [
+    "Themes",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage: vue"
+  ],
+  "main": "./dist/extension.cjs",
+  "scripts": {
+    "build": "bun run ./build/build-with-esbuild.ts",
+    "watch": "bun run ./build/watch-with-esbuild.ts",
+    "changelog": "changelog-machine --config changelog.config.json",
+    "check-colors": "bun run ./src/scripts/svg/checkSvgColors.ts",
+    "check": "bun ./src/scripts/icons/checks",
+    "contributors": "bun ./src/scripts/contributors/index.ts",
+    "generateJson": "bun ./src/scripts/icons/generateJson.ts",
+    "lint": "bunx @biomejs/biome check --write ./src",
+    "format": "bunx @biomejs/biome format --write ./src",
+    "postcompile": "bun run generateJson && bun run check",
+    "pretest": "bun run build && tsc -p ./",
+    "preversion": "bun run contributors && git add images/contributors.png && bun run preview && git add images/fileIcons.png && git add images/folderIcons.png && bun run svgo && git add icons/*.svg",
+    "preview": "bun ./src/scripts/preview",
+    "svgo": "svgo -i icons -o icons -q",
+    "test-compile": "tsc -p ./",
+    "test": "bun ./out/test/runTest.js",
+    "version": "bun run changelog && git add CHANGELOG.md",
+    "vscode:prepublish": "bun run lint && bun run build && bun run postcompile",
+    "install:server": "cd server && bun install",
+    "compile": "rollup -c rollup.config.js"
   },
   "publisher": "rafaelburghausen",
   "repository": {
@@ -12,17 +43,12 @@
     "url": "https://github.com/marcos-burghausen/Extensao-Rafa.git"
   },
   "icon": "logo_2.png",
-  "categories": [
-    "Themes",
-    "Programming Languages"
-  ],
   "keywords": [
     "icons",
     "theme",
     "material",
     "icon-theme",
     "customization",
-    "Vue",
     "vue",
     "vuejs"
   ],
@@ -36,12 +62,23 @@
     },
     "virtualWorkspaces": true
   },
-  "activationEvents": [],
-  "main": "./dist/extension.js",
+  "browser": "./dist/web/extension.cjs",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "icons",
+    "languages",
+    "src",
+    "syntaxes",
+    "themes",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "contributes": {
     "themes": [
       {
-        "label": "Machine",
+        "label": "Alucard",
         "uiTheme": "vs-dark",
         "path": "./themes/rafa-theme-alucard-color-theme.json"
       },
@@ -61,15 +98,74 @@
         "path": "./themes/rafa-theme-darker-color-theme.json"
       },
       {
-        "label": "Alucard",
+        "label": "Machine",
         "uiTheme": "vs-dark",
         "path": "./themes/rafa-theme-machine-color-theme.json"
       }
     ],
+    "iconThemes": [
+      {
+        "id": "rafa-icon-theme",
+        "label": "Rafa Icon Theme",
+        "path": "./dist/rafa-icons.json",
+        "_watch": true
+      }
+    ],
     "commands": [
       {
-        "command": "rafa-oficial.helloWorld",
-        "title": "Hello World"
+        "command": "rafa-icon-theme.activateIcons",
+        "title": "rafa-icon-theme.activateIcons",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.toggleIconPacks",
+        "title": "rafa-icon-theme.toggleIconPacks",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.changeFolderTheme",
+        "title": "rafa-icon-theme.changeFolderTheme",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.changeFolderColor",
+        "title": "rafa-icon-theme.changeFolderColor",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.changeFileColor",
+        "title": "rafa-icon-theme.changeFileColor",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.restoreDefaultConfig",
+        "title": "rafa-icon-theme.restoreDefaultConfig",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.toggleExplorerArrows",
+        "title": "rafa-icon-theme.toggleExplorerArrows",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.changeOpacity",
+        "title": "rafa-icon-theme.changeOpacity",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.toggleGrayscale",
+        "title": "rafa-icon-theme.toggleGrayscale",
+        "enablement": "!isWeb"
+      },
+      {
+        "command": "rafa-icon-theme.changeSaturation",
+        "title": "rafa-icon-theme.changeSaturation",
+        "enablement": "!isWeb"
+      }
+    ],
+    "breakpoints": [
+      {
+        "language": "vue"
       }
     ],
     "languages": [
@@ -182,33 +278,578 @@
           "meta.embedded.block.vue": "vue"
         }
       }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "RafaVue",
+      "properties": {
+        "rafa-theme.activeIconPack": {
+          "type": "string",
+          "default": "angular",
+          "description": "%configuration.activeIconPack%",
+          "enumDescriptions": [
+            "%configuration.activeIconPack.angular%",
+            "%configuration.activeIconPack.angular_ngrx%",
+            "%configuration.activeIconPack.react%",
+            "%configuration.activeIconPack.react_redux%",
+            "%configuration.activeIconPack.qwik%",
+            "%configuration.activeIconPack.vue%",
+            "%configuration.activeIconPack.vue_vuex%",
+            "%configuration.activeIconPack.nest%",
+            "%configuration.activeIconPack.none%"
+          ],
+          "enum": [
+            "angular",
+            "angular_ngrx",
+            "react",
+            "react_redux",
+            "qwik",
+            "vue",
+            "vue_vuex",
+            "nest",
+            "none"
+          ]
+        },
+        "rafa-theme.files.associations": {
+          "type": "object",
+          "default": {},
+          "description": "%configuration.files.associations%"
+        },
+        "rafa-theme.folders.associations": {
+          "type": "object",
+          "default": {},
+          "description": "%configuration.folders.associations%"
+        },
+        "rafa-theme.languages.associations": {
+          "type": "object",
+          "default": {},
+          "description": "%configuration.languages.associations%"
+        },
+        "rafa-theme.files.customClones": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "%configuration.customClones.name%"
+              },
+              "base": {
+                "type": "string",
+                "description": "%configuration.customClones.base%"
+              },
+              "color": {
+                "type": "string",
+                "description": "%configuration.customClones.color%"
+              },
+              "lightColor": {
+                "type": "string",
+                "description": "%configuration.customClones.lightColor%"
+              },
+              "fileNames": {
+                "type": "array",
+                "default": [],
+                "description": "%configuration.customClones.fileNames%",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fileExtensions": {
+                "type": "array",
+                "default": [],
+                "description": "%configuration.customClones.fileExtensions%",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "description": "%configuration.customClones%"
+        },
+        "rafa-theme.folders.customClones": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "%configuration.customClones.name%"
+              },
+              "base": {
+                "type": "string",
+                "description": "%configuration.customClones.base%"
+              },
+              "color": {
+                "type": "string",
+                "description": "%configuration.customClones.color%"
+              },
+              "lightColor": {
+                "type": "string",
+                "description": "%configuration.customClones.lightColor%"
+              },
+              "folderNames": {
+                "type": "array",
+                "description": "%configuration.customClones.folderNames%",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "description": "%configuration.customClones%"
+        },
+        "rafa-theme.folders.theme": {
+          "type": "string",
+          "default": "specific",
+          "description": "%configuration.folders.theme%",
+          "enumDescriptions": [
+            "%configuration.folders.theme.specific%",
+            "%configuration.folders.theme.classic%",
+            "%configuration.folders.theme.none%"
+          ],
+          "enum": [
+            "specific",
+            "classic",
+            "none"
+          ]
+        },
+        "rafa-theme.folders.color": {
+          "type": "string",
+          "default": "#90a4ae",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+          "description": "%configuration.folders.color%"
+        },
+        "rafa-theme.files.color": {
+          "type": "string",
+          "default": "#90a4ae",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+          "description": "%configuration.files.color%"
+        },
+        "rafa-theme.opacity": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%configuration.opacity%"
+        },
+        "rafa-theme.hidesExplorerArrows": {
+          "type": "boolean",
+          "default": false,
+          "description": "%configuration.hidesExplorerArrows%"
+        },
+        "rafa-theme.saturation": {
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "%configuration.saturation%"
+        },
+        "vetur.ignoreProjectWarning": {
+          "type": "boolean",
+          "default": false,
+          "description": "Vetur will warn about not setup correctly for the project. You can disable it.",
+          "scope": "application"
+        },
+        "vetur.useWorkspaceDependencies": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use dependencies from workspace. Support for TypeScript, Prettier, @starptech/prettyhtml, prettier-eslint, prettier-tslint, stylus-supremacy, @prettier/plugin-pug.",
+          "scope": "application"
+        },
+        "vetur.completion.autoImport": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include completion for module export and auto import them"
+        },
+        "vetur.completion.scaffoldSnippetSources": {
+          "type": "object",
+          "default": {
+            "workspace": "💼",
+            "user": "🗒️",
+            "vetur": "✌"
+          },
+          "properties": {
+            "workspace": {
+              "type": "string",
+              "default": "💼",
+              "description": "Show Scaffold Snippets from `<WORKSPACE>/.vscode/vetur/snippets`."
+            },
+            "user": {
+              "type": "string",
+              "default": "🗒️",
+              "description": "Show Scaffold Snippets from `<USER-DATA-DIR>/User/snippets/vetur`."
+            },
+            "vetur": {
+              "type": "string",
+              "default": "✌",
+              "description": "Show Scaffold Snippets bundled in Vetur."
+            }
+          },
+          "description": "Where Vetur source Scaffold Snippets from and how to indicate them.."
+        },
+        "vetur.completion.tagCasing": {
+          "type": "string",
+          "default": "kebab",
+          "enum": [
+            "initial",
+            "kebab"
+          ],
+          "enumDescriptions": [
+            "use the key in `components: {...}` as is for tag completion and do not force any casing",
+            "kebab-case completion for <my-tag>"
+          ],
+          "description": "Casing conversion for tag completion"
+        },
+        "vetur.grammar.customBlocks": {
+          "type": "object",
+          "default": {
+            "docs": "md",
+            "i18n": "json"
+          },
+          "description": "Mapping from custom block tag name to language name. Used for generating grammar to support syntax highlighting for custom blocks."
+        },
+        "vetur.validation.template": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate vue-html in <template> using eslint-plugin-vue"
+        },
+        "vetur.validation.templateProps": {
+          "type": "boolean",
+          "default": false,
+          "description": "Validate props usage in <template> region. Show error/warning for not passing declared props to child components and show error for passing wrongly typed interpolation expressions"
+        },
+        "vetur.validation.interpolation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate interpolations in <template> region using TypeScript language service"
+        },
+        "vetur.validation.style": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate css/scss/less/postcss in <style>"
+        },
+        "vetur.validation.script": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate js/ts in <script>"
+        },
+        "vetur.format.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the Vetur document formatter."
+        },
+        "vetur.format.options.tabSize": {
+          "type": "number",
+          "default": 2,
+          "description": "Number of spaces per indentation level. Inherited by all formatters."
+        },
+        "vetur.format.options.useTabs": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use tabs for indentation. Inherited by all formatters."
+        },
+        "vetur.format.defaultFormatter.html": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettyhtml",
+            "js-beautify-html",
+            "prettier"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "🚧 [DEPRECATED] prettyhtml",
+            "html formatter of js-beautify",
+            "prettier"
+          ],
+          "description": "Default formatter for <template> region"
+        },
+        "vetur.format.defaultFormatter.pug": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "prettier"
+          ],
+          "description": "Default formatter for <template lang='pug'> region"
+        },
+        "vetur.format.defaultFormatter.css": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "css formatter using css parser from prettier"
+          ],
+          "description": "Default formatter for <style> region"
+        },
+        "vetur.format.defaultFormatter.postcss": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "postcss formatter using css parser from prettier"
+          ],
+          "description": "Default formatter for <style lang='postcss'> region"
+        },
+        "vetur.format.defaultFormatter.scss": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "scss formatter using scss parser from prettier"
+          ],
+          "description": "Default formatter for <style lang='scss'> region"
+        },
+        "vetur.format.defaultFormatter.sass": {
+          "type": "string",
+          "default": "sass-formatter",
+          "enum": [
+            "none",
+            "sass-formatter"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "sass formatter"
+          ],
+          "description": "Default formatter for <style lang='sass'> region"
+        },
+        "vetur.format.defaultFormatter.less": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "less formatter using postcss parser from prettier"
+          ],
+          "description": "Default formatter for <style lang='less'> region"
+        },
+        "vetur.format.defaultFormatter.stylus": {
+          "type": "string",
+          "default": "stylus-supremacy",
+          "enum": [
+            "none",
+            "stylus-supremacy"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "stylus formatter from stylus-supremacy"
+          ],
+          "description": "Default formatter for <style lang='stylus'> region"
+        },
+        "vetur.format.defaultFormatter.js": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier",
+            "prettier-eslint",
+            "vscode-typescript"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "js formatter from prettier",
+            "prettier-eslint",
+            "js formatter from TypeScript"
+          ],
+          "description": "Default formatter for <script> region"
+        },
+        "vetur.format.defaultFormatter.ts": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier",
+            "prettier-tslint",
+            "vscode-typescript"
+          ],
+          "enumDescriptions": [
+            "disable formatting",
+            "ts formatter using typescript parser from prettier",
+            "ts formatter from TypeScript"
+          ],
+          "description": "Default formatter for <script> region"
+        },
+        "vetur.format.defaultFormatterOptions": {
+          "type": "object",
+          "properties": {
+            "prettier": {
+              "type": "object",
+              "description": "Global prettier config used by prettier formatter. Used by `prettier` and `prettier-eslint`.\n\nVetur will prefer a prettier config file at home directory if one exists.",
+              "properties": {}
+            },
+            "prettyhtml": {
+              "type": "object",
+              "description": "Options for prettyhtml",
+              "properties": {
+                "printWidth": {
+                  "type": "number",
+                  "default": 100,
+                  "description": "Maximum amount of characters allowed per line"
+                },
+                "singleQuote": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether to use single quotes by default"
+                },
+                "wrapAttributes": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether to wrap attributes"
+                },
+                "sortAttributes": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether to sort attributes"
+                }
+              }
+            },
+            "js-beautify-html": {
+              "type": "object",
+              "description": "Options for js-beautify"
+            }
+          },
+          "default": {
+            "js-beautify-html": {
+              "wrap_attributes": "force-expand-multiline"
+            },
+            "prettyhtml": {
+              "printWidth": 100,
+              "singleQuote": false,
+              "wrapAttributes": false,
+              "sortAttributes": false
+            }
+          },
+          "description": "Options for all default formatters"
+        },
+        "vetur.format.styleInitialIndent": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to have initial indent for <style> region"
+        },
+        "vetur.format.scriptInitialIndent": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to have initial indent for <script> region"
+        },
+        "vetur.languageFeatures.codeActions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to enable codeActions"
+        },
+        "vetur.languageFeatures.updateImportOnFileMove": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to automatic updating import path when rename or move a file"
+        },
+        "vetur.languageFeatures.semanticTokens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to enable semantic highlighting. Currently only works for typescript"
+        },
+        "vetur.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and Vue Language Server."
+        },
+        "vetur.dev.vlsPath": {
+          "type": "string",
+          "description": "Path to vls for Vetur developers. There are two ways of using it. \n\n1. Clone vuejs/vetur from GitHub, build it and point it to the ABSOLUTE path of `/server`.\n2. `yarn global add vls` and point Vetur to the installed location (`yarn global dir` + node_modules/vls)",
+          "scope": "machine"
+        },
+        "vetur.dev.vlsPort": {
+          "type": "number",
+          "description": "The port that VLS listens to. Can be used for attaching to the VLS Node process for debugging / profiling.",
+          "default": -1
+        },
+        "vetur.dev.logLevel": {
+          "type": "string",
+          "description": "Log level for VLS",
+          "default": "INFO",
+          "enum": [
+            "INFO",
+            "DEBUG"
+          ],
+          "enumDescriptions": [
+            "Only log info messages. This is the default.",
+            "Log info and debug messages."
+          ]
+        },
+        "vetur.experimental.templateInterpolationService": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable template interpolation service that offers hover / definition / references in Vue interpolations."
+        },
+        "vetur.underline.refValue": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable underline `.value` when using composition API."
+        }
+      }
+    },
+    "semanticTokenScopes": [
+      {
+        "scopes": {
+          "property.refValue": [
+            "entity.name.function"
+          ]
+        }
+      }
     ]
   },
-  "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "npm run check-types && npm run lint && node esbuild.js",
-    "watch": "npm-run-all -p watch:*",
-    "watch:esbuild": "node esbuild.js --watch",
-    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "npm run check-types && npm run lint && node esbuild.js --production",
-    "compile-tests": "tsc -p . --outDir out",
-    "watch-tests": "tsc -p . -w --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+  "dependencies": {
+    "chroma-js": "^2.4.2",
+    "lodash.merge": "4.6.2",
+    "svgson": "^5.3.1",
+    "vscode-languageclient": "^7.0.0",
+    "vscode-languageserver-types": "^3.16.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.2",
+    "@types/chroma-js": "^2.4.4",
+    "@types/glob": "^8.0.1",
+    "@types/lodash.merge": "^4.6.7",
+    "@types/puppeteer": "^5.4.6",
     "@types/vscode": "^1.91.0",
-    "@types/mocha": "^10.0.7",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
-    "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.57.0",
-    "esbuild": "^0.21.5",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.4.5",
-    "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "@vscode/test-electron": "^2.3.9",
+    "axios": "^1.4.0",
+    "bun-types": "^1.1.12",
+    "changelog-machine": "^1.0.2",
+    "esbuild": "^0.21.4",
+    "glob": "^8.0.3",
+    "puppeteer": "^22.11.0",
+    "rimraf": "^3.0.2",
+    "svg-color-linter": "^1.3.0",
+    "svgo": "^2.8.0",
+    "typescript": "^4.9.5",
+    "rollup": "^3.17.0",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "prettier": "^2.8.4"
   }
 }

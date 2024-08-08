@@ -2,6 +2,12 @@
 
 Todas as alterações notáveis ​​neste projeto serão documentadas neste arquivo.
 
+#### [v3.0.0]
+
+> 07/08/2024
+
+- Adicionado tema de icones baseado no material icons theme (meus icones estão em desenvolvimento)
+
 #### [v2.0.0]
 
 > 30/07/2024
