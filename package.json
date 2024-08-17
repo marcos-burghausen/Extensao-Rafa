@@ -2,7 +2,7 @@
   "name": "rafa-theme",
   "displayName": "Rafa-Oficial",
   "description": "Esta é uma extensão de temas dark (com e sem itálico) e tema de icones. Ainda está em desenvolvimento",
-  "version": "3.0.2",
+  "version": "3.0.5",
   "engines": {
     "vscode": "^1.91.0"
   },

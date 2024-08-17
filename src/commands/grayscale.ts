@@ -18,14 +18,10 @@ export const toggleGrayscale = async () => {
 /** Show QuickPick items to select preferred configuration for grayscale icons. */
 const showQuickPickItems = (status: boolean) => {
   const on: QuickPickItem = {
-    description: translate('toggleSwitch.on'),
-    detail: translate('grayscale.enable'),
-    label: status ? '\u2714' : '\u25FB',
+    label: `${status ? '\u2714 ' : '     '}${translate('toggleSwitch.on')} - ${translate('grayscale.enable')}`,
   };
   const off: QuickPickItem = {
-    description: translate('toggleSwitch.off'),
-    detail: translate('grayscale.disable'),
-    label: !status ? '\u2714' : '\u25FB',
+    label: `${!status ? '\u2714 ' : '     '}${translate('toggleSwitch.off')} - ${translate('grayscale.disable')}`,
   };
   return codeWindow.showQuickPick([on, off], {
     placeHolder: translate('grayscale.toggle'),
@@ -36,16 +32,12 @@ const showQuickPickItems = (status: boolean) => {
 
 /** Handle the actions from the QuickPick. */
 const handleQuickPickActions = (value: QuickPickItem) => {
-  if (!value || !value.description) return;
-  switch (value.description) {
-    case translate('toggleSwitch.on'): {
-      return setThemeConfig('saturation', 0, true);
-    }
-    case translate('toggleSwitch.off'): {
-      return setThemeConfig('saturation', 1, true);
-    }
-    default:
-      return;
+  if (!value?.label) return;
+  const labelContent = value.label.trim();
+  if (labelContent.includes(translate('toggleSwitch.on'))) {
+    return setThemeConfig('saturation', 0, true);
+  } else if (labelContent.includes(translate('toggleSwitch.off'))) {
+    return setThemeConfig('saturation', 1, true);
   }
 };
 

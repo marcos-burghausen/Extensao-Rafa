@@ -18,6 +18,10 @@ export const folderIcons: FolderTheme[] = [
         folderNames: ['src', 'srcs', 'source', 'sources', 'code'],
       },
       {
+        name: 'folder-apache',
+        folderNames: ['apache'],
+      },
+      {
         name: 'folder-dist',
         folderNames: ['dist', 'out', 'build', 'release', 'bin'],
       },

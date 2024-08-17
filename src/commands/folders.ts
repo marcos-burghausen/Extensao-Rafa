@@ -24,15 +24,7 @@ export const changeFolderTheme = async () => {
 const showQuickPickItems = (activeTheme: string) => {
   const options = folderIcons.map(
     (theme): QuickPickItem => ({
-      description: capitalizeFirstLetter(theme.name),
-      detail:
-        theme.name === 'none'
-          ? translate('folders.disabled')
-          : translate(
-              'folders.theme.description',
-              capitalizeFirstLetter(theme.name)
-            ),
-      label: theme.name === activeTheme ? '\u2714' : '\u25FB',
+      label: `${theme.name === activeTheme ? '\u2714' : '    '} ${capitalizeFirstLetter(theme.name)}    ${theme.name === 'none' ? translate('folders.disabled') : translate('folders.theme.description', capitalizeFirstLetter(theme.name))}`,
     })
   );
 
@@ -45,8 +37,19 @@ const showQuickPickItems = (activeTheme: string) => {
 
 /** Handle the actions from the QuickPick. */
 const handleQuickPickActions = (value: QuickPickItem) => {
-  if (!value || !value.description) return;
-  return setThemeConfig('folders.theme', value.description.toLowerCase(), true);
+  if (!value?.label) return;
+  const labelContent = value.label.trim();
+  const selectedTheme = folderIcons.find((theme) =>
+    labelContent.includes(capitalizeFirstLetter(theme.name))
+  );
+
+  if (selectedTheme) {
+    return setThemeConfig(
+      'folders.theme',
+      selectedTheme.name.toLowerCase(),
+      true
+    );
+  }
 };
 
 /** Get the current folder theme. */

@@ -18,15 +18,13 @@ const showQuickPickItems = (
   status: boolean
 ): Thenable<QuickPickItem | undefined> => {
   const on: QuickPickItem = {
-    description: translate('toggleSwitch.on'),
-    detail: translate('explorerArrows.enable'),
-    label: !status ? '\u2714' : '\u25FB',
+    label: `${!status ? '\u2714 ' : '    '} ${translate('toggleSwitch.on')} - ${translate('explorerArrows.enable')}`,
   };
+
   const off: QuickPickItem = {
-    description: translate('toggleSwitch.off'),
-    detail: translate('explorerArrows.disable'),
-    label: status ? '\u2714' : '\u25FB',
+    label: `${status ? '\u2714 ' : '    '} ${translate('toggleSwitch.off')} - ${translate('explorerArrows.disable')}`,
   };
+
   return codeWindow.showQuickPick([on, off], {
     placeHolder: translate('explorerArrows.toggle'),
     ignoreFocusOut: false,
@@ -36,16 +34,12 @@ const showQuickPickItems = (
 
 /** Handle the actions from the QuickPick. */
 const handleQuickPickActions = (value: QuickPickItem | undefined) => {
-  if (!value?.description) return;
-  switch (value.description) {
-    case translate('toggleSwitch.on'): {
-      return setThemeConfig('hidesExplorerArrows', false, true);
-    }
-    case translate('toggleSwitch.off'): {
-      return setThemeConfig('hidesExplorerArrows', true, true);
-    }
-    default:
-      return;
+  if (!value?.label) return;
+  const labelContent = value.label.trim();
+  if (labelContent.includes(translate('toggleSwitch.on'))) {
+    return setThemeConfig('hidesExplorerArrows', false, true);
+  } else if (labelContent.includes(translate('toggleSwitch.off'))) {
+    return setThemeConfig('hidesExplorerArrows', true, true);
   }
 };
 

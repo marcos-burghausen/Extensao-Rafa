@@ -11,11 +11,11 @@ interface FileColor {
 const iconPalette: FileColor[] = [
   { label: 'Grey (Default)', hex: '#90a4ae' },
   { label: 'Blue', hex: '#42a5f5' },
-  { label: 'Green', hex: '#7CB342' },
-  { label: 'Teal', hex: '#26A69A' },
+  // { label: 'Green', hex: '#7CB342' },
+  // { label: 'Teal', hex: '#26A69A' },
   { label: 'Red', hex: '#EF5350' },
-  { label: 'Orange', hex: '#FF7043' },
-  { label: 'Yellow', hex: '#FDD835' },
+  // { label: 'Orange', hex: '#FF7043' },
+  // { label: 'Yellow', hex: '#FDD835' },
   { label: 'Custom Color', hex: 'Custom HEX Code' },
 ];
 
@@ -37,7 +37,7 @@ const showQuickPickItems = (currentColor: string) => {
   const options = iconPalette.map(
     (color): QuickPickItem => ({
       description: color.label,
-      label: isColorActive(color, currentColor) ? '\u2714' : '\u25FB',
+      label: isColorActive(color, currentColor) ? '\u2714' : '    ',
     })
   );
 

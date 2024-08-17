@@ -25,12 +25,13 @@ const showQuickPickItems = (activePack: string) => {
     const iconPacksDeactivated = pack === 'none' && activePack === '';
 
     return {
+      label: `${iconPacksDeactivated || active ? '\u2714' : '    '}  ${packLabel}  ->  ${translate(`iconPacks.${pack === 'none' ? 'disabled' : 'description'}`, packLabel)}`,
       description: packLabel,
-      detail: translate(
-        `iconPacks.${pack === 'none' ? 'disabled' : 'description'}`,
-        packLabel
-      ),
-      label: iconPacksDeactivated ? '\u2714' : active ? '\u2714' : '\u25FB',
+      // detail: translate(
+      //   `iconPacks.${pack === 'none' ? 'disabled' : 'description'}`,
+      //   packLabel
+      // ),
+      // label: iconPacksDeactivated ? '\u2714' : active ? '\u2714' : '    ',
     };
   });
 
@@ -44,8 +45,14 @@ const showQuickPickItems = (activePack: string) => {
 
 /** Handle the actions from the QuickPick. */
 const handleQuickPickActions = (value: QuickPickItem) => {
-  if (!value || !value.description) return;
-  const decision = value.description.replace(' + ', '_').toLowerCase();
+  if (!value?.label) return;
+
+  const labelContent = value.label.trim();
+  const selectedPack = getAllIconPacks().find((pack) =>
+    labelContent.includes(toTitleCase(pack.replace('_', ' + ')))
+  );
+
+  const decision = selectedPack ? selectedPack : 'none';
 
   setThemeConfig('activeIconPack', decision === 'none' ? '' : decision, true);
 };
